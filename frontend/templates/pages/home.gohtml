@@ -1,0 +1,16 @@
+{{define "home"}}
+<html>
+    {{template "head"}}
+    <body>
+        {{template "header" "Hello World"}}
+        <main>
+        {{range .Blocks}}
+            <section>
+                {{template "block" .}}
+            </section>
+        {{end}}
+        </main>
+        {{template "footer"}}
+    </body>
+</html>
+{{end}}
