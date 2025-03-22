@@ -1,25 +1,10 @@
 const crypto = require("crypto");
 
 class Block {
-  /**
-   * @type {string}
-   */
-  data;
-
-  /**
-   * @type {string}
-   */
-  hash;
-
-  /**
-   * @type {string}
-   */
-  prev_hash;
-
-  /**
-   * @type {number}
-   */
-  height;
+  /**@type {string}*/ data;
+  /**@type {string}*/ hash;
+  /**@type {string}*/ prevHash;
+  /**@type {number} */ height;
 
   constructor(data, prevHash, height) {
     this.data = data;

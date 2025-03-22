@@ -1,5 +1,5 @@
 const Fastify = require("fastify");
-const blockchain = require("./blockchain");
+const blockchain = require("./chain");
 
 const server = Fastify({ logger: true });
 

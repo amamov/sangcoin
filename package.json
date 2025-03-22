@@ -4,7 +4,9 @@
     "dev": ""
   },
   "dependencies": {
-    "fastify": "^5.2.1"
+    "abstract-level": "^3.0.1",
+    "fastify": "^5.2.1",
+    "level": "^9.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",

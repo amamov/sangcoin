@@ -3,19 +3,20 @@
 @hostname = localhost
 @port = 7777
 @host = {{hostname}}:{{port}}
+@URL = http://{{host}}
 @contentType = application/json
 @blocks = blocks
 
 
 ###
-http://{{host}}
+{{URL}}
 
 
 ### 
-http://{{host}}/{{blocks}}
+{{URL}}/{{blocks}}
 
 ###
-POST http://{{host}}/{{blocks}}
+POST {{URL}}/{{blocks}}
 content-type: application/json
 
 {
@@ -23,6 +24,6 @@ content-type: application/json
 }
 
 ### 
-http://{{host}}/{{blocks}}/3
+{{URL}}/{{blocks}}/3
 
 
