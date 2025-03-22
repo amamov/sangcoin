@@ -1,19 +1,28 @@
 # https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
+@hostname = localhost
+@port = 7777
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@blocks = blocks
+
 
 ###
-http://localhost:7777/
+http://{{host}}
 
 
 ### 
-http://localhost:7777/blocks
+http://{{host}}/{{blocks}}
 
 ###
-POST http://localhost:7777/blocks
+POST http://{{host}}/{{blocks}}
+content-type: application/json
 
 {
     "message": "Data for my block"
 }
 
 ### 
-http://localhost:7777/blocks/3
+http://{{host}}/{{blocks}}/3
+
+
