@@ -1,6 +1,26 @@
 const crypto = require("crypto");
 
 class Block {
+  /**
+   * @type {string}
+   */
+  data;
+
+  /**
+   * @type {string}
+   */
+  hash;
+
+  /**
+   * @type {string}
+   */
+  prev_hash;
+
+  /**
+   * @type {number}
+   */
+  height;
+
   constructor(data, prevHash, height) {
     this.data = data;
     this.prevHash = prevHash;
@@ -15,13 +35,15 @@ class Block {
 }
 
 class Blockchain {
+  /**@type {Block[]}*/ blocks;
+
   constructor() {
     if (!Blockchain.instance) {
       this.blocks = [];
       this.addBlock("Genesis Block");
       Blockchain.instance = this;
+      Object.freeze(this);
     }
-
     return Blockchain.instance;
   }
 
@@ -32,6 +54,10 @@ class Blockchain {
     return this.blocks[this.blocks.length - 1].hash;
   }
 
+  /**
+   * @param {string} data
+   * @returns {Block}
+   */
   createBlock(data) {
     const prevHash = this.getLastHash();
     const height = this.blocks.length + 1;
@@ -47,6 +73,10 @@ class Blockchain {
     return this.blocks;
   }
 
+  /**
+   * @param {number} height
+   * @returns {Block|null}
+   */
   getBlock(height) {
     if (height <= 0 || height > this.blocks.length) {
       return null;
@@ -55,7 +85,6 @@ class Blockchain {
   }
 }
 
-const instance = new Blockchain();
-Object.freeze(instance); // Prevent modification
+const blockchain = new Blockchain();
 
-module.exports = instance;
+module.exports = blockchain;

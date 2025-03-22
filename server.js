@@ -35,12 +35,9 @@ server.post(
   },
   async (request) => {
     const { message } = request.body;
-    console.log(message);
     blockchain.addBlock(message);
     return blockchain.allBlocks();
   }
 );
-
-// 서버 실행
 
 module.exports = server;
