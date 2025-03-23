@@ -19,12 +19,10 @@ class Database {
   });
 
   async saveBlock(hash: string, data: Buffer<ArrayBuffer>) {
-    console.log(`Saving Block ${hash} \n data: ${data} \n`);
     await this.blocks.put(hash, data);
   }
 
   async saveBlockchain(data: Buffer<ArrayBuffer>) {
-    console.log(`Update Blockchain ${data} \n`);
     await this.datas.put(CHECKPOINT, data);
   }
 
