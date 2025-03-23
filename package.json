@@ -2,7 +2,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node dist/app.js",
-    "dev": "tsx src/app.js",
+    "dev": "tsx src/app.ts",
     "build": "tsc"
   },
   "dependencies": {
