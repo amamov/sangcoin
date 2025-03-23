@@ -1,3 +1,5 @@
+import * as crypto from "crypto";
+
 class Utils {
   bytesFrom = (value: any) => {
     const buffer = Buffer.from(JSON.stringify(value));
@@ -20,6 +22,12 @@ class Utils {
       console.error("Data received:", str);
       throw error;
     }
+  };
+
+  hash = (value: any): string => {
+    const s = JSON.stringify(value);
+    console.log("utils hash func : ", s);
+    return crypto.createHash("sha256").update(s).digest("hex");
   };
 }
 

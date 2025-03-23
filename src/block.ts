@@ -1,54 +1,48 @@
-import crypto from "crypto";
 import { db } from "./db";
 import { utils } from "./utils";
-
-const difficulty: number = 2;
+import { getBlockchain } from "./chain";
 
 export default class Block {
-  readonly data: string;
-  readonly prevHash: string;
-  readonly height: number;
+  data!: string;
+  prevHash!: string;
+  height!: number;
   hash!: string;
-  difficulty: number;
-  nonce: number;
+  difficulty!: number;
+  nonce!: number;
+  timestamp!: number;
 
-  constructor(data: string, prevHash: string, height: number) {
+  async create(data: string, prevHash: string, height: number) {
     this.data = data;
+    this.hash = "";
     this.prevHash = prevHash;
     this.height = height;
 
-    this.difficulty = 2;
+    const currentBlockchain = await getBlockchain();
+    this.difficulty = await currentBlockchain.difficulty();
+
     this.nonce = 0;
 
-    // const payload = this.data + this.prevHash + String(this.height);
-    // this.hash = crypto.createHash("sha256").update(payload).digest("hex");
     this.mine();
-
+    await this.persist();
     Object.freeze(this);
   }
 
-  async persist(): Promise<void> {
+  private async persist(): Promise<void> {
     const bytes = utils.bytesFrom(this);
     await db.saveBlock(this.hash, bytes);
   }
 
   private mine() {
     const target = "0".repeat(this.difficulty);
+    console.log("mine start");
 
     while (true) {
-      const blockAsString = `${this.data}${this.prevHash}${this.nonce}`;
-      const hash = crypto
-        .createHash("sha256")
-        .update(blockAsString)
-        .digest("hex");
-
-      console.log(`Block as String: ${blockAsString}`);
-      console.log(`Hash: ${hash}`);
-      console.log(`Target: ${target}`);
-      console.log(`Nonce: ${this.nonce}\n\n`);
+      this.timestamp = Math.floor(Date.now() / 1000);
+      const hash = utils.hash(this);
 
       if (hash.startsWith(target)) {
         this.hash = hash;
+        console.log(`Mined block with hash: ${hash}`);
         break;
       } else {
         this.nonce++;
