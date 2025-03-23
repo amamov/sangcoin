@@ -25,6 +25,7 @@ class Database {
    * @param {Buffer<ArrayBuffer>} data
    */
   async saveBlockchain(data) {
+    console.log(`Update Blockchain ${data} \n`);
     await datas.put("checkpoint", data);
   }
 }
