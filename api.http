@@ -20,10 +20,10 @@ POST {{URL}}/{{blocks}}
 content-type: application/json
 
 {
-    "message": "Data for my block"
+    "message": "3333"
 }
 
 ### 
-{{URL}}/{{blocks}}/3
+{{URL}}/{{blocks}}/8460a67c24deee8ff08a5b4bbd77e0dc16451128978866af75acb92b5faf55d2
 
 
