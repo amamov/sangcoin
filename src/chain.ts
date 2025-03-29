@@ -5,7 +5,7 @@ import { utils } from "./utils";
 const DEFAULT_DIFFICULTY = 2;
 const DIFFICULTY_INTERVAL = 5; // 블럭 5개 생성될때마다 DIFF 조정
 const BLOCK_INTERVAL = 2; // 2분마다 블럭이 1개씩 생성
-const ALLOWED_RANGE = 2;
+const ALLOWED_RANGE_MINUTE = 2;
 
 class Blockchain {
   lastHash!: string;
@@ -97,9 +97,9 @@ class Blockchain {
     const actualTime =
       (lastBlock.timestamp - lastRecalculatedBlock.timestamp) / 60;
     const expectedTime = DIFFICULTY_INTERVAL * BLOCK_INTERVAL;
-    if (actualTime <= expectedTime - ALLOWED_RANGE) {
+    if (actualTime <= expectedTime - ALLOWED_RANGE_MINUTE) {
       return this.currentDifficulty + 1;
-    } else if (actualTime >= expectedTime + ALLOWED_RANGE) {
+    } else if (actualTime >= expectedTime + ALLOWED_RANGE_MINUTE) {
       return this.currentDifficulty - 1;
     }
     return this.currentDifficulty;
