@@ -12,6 +12,10 @@ server.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
   return "hello blockchain";
 });
 
+server.get("/status", async (request: FastifyRequest, reply: FastifyReply) => {
+  return await getBlockchain();
+});
+
 server.get("/blocks", async (request: FastifyRequest, reply: FastifyReply) => {
   const blockchain = await getBlockchain();
   return blockchain.blocks();

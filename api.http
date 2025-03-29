@@ -11,6 +11,8 @@
 ###
 {{URL}}
 
+###
+{{URL}}/status
 
 ### 
 {{URL}}/{{blocks}}

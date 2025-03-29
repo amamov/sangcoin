@@ -55,6 +55,7 @@ class Blockchain {
     const restoredData = utils.restoreBuffer(data);
     this.height = restoredData.height;
     this.lastHash = restoredData.lastHash;
+    this.currentDifficulty = restoredData.currentDifficulty;
   }
 
   private async persist() {
