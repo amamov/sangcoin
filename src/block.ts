@@ -1,6 +1,5 @@
 import { db } from "./db";
 import { utils } from "./utils";
-import { getBlockchain } from "./chain";
 
 export default class Block {
   data!: string;
@@ -11,16 +10,23 @@ export default class Block {
   nonce!: number;
   timestamp!: number;
 
-  async create(data: string, prevHash: string, height: number) {
+  async create({
+    data,
+    prevHash,
+    height,
+    difficulty,
+  }: {
+    data: string;
+    prevHash: string;
+    height: number;
+    difficulty: number;
+  }) {
     this.data = data;
     this.hash = "";
     this.prevHash = prevHash;
     this.height = height;
-
-    const currentBlockchain = await getBlockchain();
-    this.difficulty = await currentBlockchain.difficulty();
-
     this.nonce = 0;
+    this.difficulty = difficulty;
 
     this.mine();
     await this.persist();
@@ -34,7 +40,6 @@ export default class Block {
 
   private mine() {
     const target = "0".repeat(this.difficulty);
-    console.log("mine start");
 
     while (true) {
       this.timestamp = Math.floor(Date.now() / 1000);
@@ -42,7 +47,6 @@ export default class Block {
 
       if (hash.startsWith(target)) {
         this.hash = hash;
-        console.log(`Mined block with hash: ${hash}`);
         break;
       } else {
         this.nonce++;

@@ -25,9 +25,10 @@ class Utils {
   };
 
   hash = (value: any): string => {
-    const s = JSON.stringify(value);
-    console.log("utils hash func : ", s);
-    return crypto.createHash("sha256").update(s).digest("hex");
+    return crypto
+      .createHash("sha256")
+      .update(JSON.stringify(value))
+      .digest("hex");
   };
 }
 

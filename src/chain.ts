@@ -3,8 +3,8 @@ import { db } from "./db";
 import { utils } from "./utils";
 
 const DEFAULT_DIFFICULTY = 2;
-const DIFFICULTY_INTERVAL = 5;
-const BLOCK_INTERVAL = 2;
+const DIFFICULTY_INTERVAL = 5; // 블럭 5개 생성될때마다 DIFF 조정
+const BLOCK_INTERVAL = 2; // 2분마다 블럭이 1개씩 생성
 const ALLOWED_RANGE = 2;
 
 class Blockchain {
@@ -38,11 +38,16 @@ class Blockchain {
   }
 
   async addBlock(data: string) {
+    this.currentDifficulty = await this.difficulty();
     const block = new Block();
-    await block.create(data, this.lastHash, this.height + 1);
+    await block.create({
+      data,
+      prevHash: this.lastHash,
+      height: this.height + 1,
+      difficulty: this.currentDifficulty,
+    });
     this.lastHash = block.hash;
     this.height = block.height;
-    this.currentDifficulty = block.difficulty;
     await this.persist();
   }
 
@@ -90,7 +95,7 @@ class Blockchain {
     const lastBlock = allBlocks[0];
     const lastRecalculatedBlock = allBlocks[DIFFICULTY_INTERVAL - 1];
     const actualTime =
-      lastBlock.timestamp / 60 - lastRecalculatedBlock.timestamp / 60;
+      (lastBlock.timestamp - lastRecalculatedBlock.timestamp) / 60;
     const expectedTime = DIFFICULTY_INTERVAL * BLOCK_INTERVAL;
     if (actualTime <= expectedTime - ALLOWED_RANGE) {
       return this.currentDifficulty + 1;
