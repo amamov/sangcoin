@@ -73,4 +73,5 @@ class Blockchain:
         return self.current_difficulty
 
 
+# Singleton
 blockchain = Blockchain()
