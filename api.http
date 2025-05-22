@@ -28,4 +28,6 @@ content-type: application/json
 ### 
 {{URL}}/{{blocks}}/8460a67c24deee8ff08a5b4bbd77e0dc16451128978866af75acb92b5faf55d2
 
+### 
+{{URL}}/debug/db
 

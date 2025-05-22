@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from pydantic import BaseModel
 from blockchain import Blockchain
 from block import Block
+from db import get_lmdb_contents
 
 app = FastAPI()
 
@@ -45,3 +46,8 @@ def add_block(request: BlockRequest):
     blockchain = Blockchain()
     blockchain.add_block(request.message)
     return {"success": True}
+
+
+@app.get("/debug/db")
+def debug_lmdb():
+    return get_lmdb_contents()

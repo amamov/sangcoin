@@ -37,5 +37,19 @@ class Database:
         self.store.close()
 
 
-# 전역 인스턴스
 db = Database()
+
+
+def get_lmdb_contents() -> list[dict]:
+    contents = []
+
+    with db.store.begin() as tx:
+        for key, value in tx.cursor():
+            k = key.decode("utf-8", errors="ignore")
+            try:
+                v = value.decode("utf-8", errors="ignore")
+            except Exception:
+                v = str(value)
+            contents.append({"key": k, "value": v})
+
+    return contents
