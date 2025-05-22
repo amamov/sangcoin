@@ -7,10 +7,7 @@ def bytes_from(obj) -> bytes:
 
 
 def restore_buffer(buffer: bytes):
-    data = json.loads(buffer.decode("utf-8"))
-    block = type("Block", (), {})()  # empty object
-    block.__dict__.update(data)
-    return block
+    return json.loads(buffer.decode("utf-8"))
 
 
 def hash_data(obj) -> str:

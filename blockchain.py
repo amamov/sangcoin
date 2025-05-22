@@ -23,8 +23,7 @@ class Blockchain:
 
     def add_block(self, data: str):
         self.current_difficulty = self._calculate_difficulty()
-        block = Block()
-        block.create(
+        block = Block(
             data=data,
             prev_hash=self.last_hash,
             height=self.height + 1,
@@ -36,9 +35,9 @@ class Blockchain:
 
     def _restore(self, data: bytes):
         restored = restore_buffer(data)
-        self.height = restored.height
-        self.last_hash = restored.last_hash
-        self.current_difficulty = restored.current_difficulty
+        self.height = restored["height"]
+        self.last_hash = restored["last_hash"]
+        self.current_difficulty = restored["current_difficulty"]
 
     def blocks(self) -> list[Block]:
         result = []
