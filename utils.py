@@ -23,14 +23,3 @@ def hash_data(obj) -> str:
         sort_keys=True,
     ).encode("utf-8")
     return hashlib.sha256(data).hexdigest()
-
-
-def singleton(cls):
-    instances = {}
-
-    def get_instance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-
-    return get_instance

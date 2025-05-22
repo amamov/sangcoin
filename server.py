@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, APIRouter
 from pydantic import BaseModel
-from blockchain import Blockchain
+from blockchain import blockchain
 from block import Block
 from db import get_lmdb_contents
 
@@ -18,7 +18,7 @@ def root():
 
 @app.get("/status")
 def get_status():
-    blockchain = Blockchain()
+
     return {
         "height": blockchain.height,
         "last_hash": blockchain.last_hash,
@@ -28,7 +28,6 @@ def get_status():
 
 @app.get("/blocks")
 def get_blocks():
-    blockchain = Blockchain()
     blocks = blockchain.blocks()
     return [block.__dict__ for block in blocks]
 
@@ -43,7 +42,6 @@ def get_block_by_hash(hash: str):
 
 @app.post("/blocks", status_code=201)
 def add_block(request: BlockRequest):
-    blockchain = Blockchain()
     blockchain.add_block(request.message)
     return {"success": True}
 

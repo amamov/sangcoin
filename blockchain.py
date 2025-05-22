@@ -1,6 +1,6 @@
 from block import Block
 from db import db
-from utils import restore_buffer, bytes_from, singleton
+from utils import restore_buffer, bytes_from
 
 DEFAULT_DIFFICULTY = 2
 DIFFICULTY_INTERVAL = 5
@@ -8,7 +8,6 @@ BLOCK_INTERVAL = 2
 ALLOWED_RANGE_MINUTE = 2
 
 
-@singleton
 class Blockchain:
     def __init__(self):
         self.last_hash = ""
@@ -72,3 +71,6 @@ class Blockchain:
         if actual_time > expected_time + ALLOWED_RANGE_MINUTE:
             return self.current_difficulty - 1
         return self.current_difficulty
+
+
+blockchain = Blockchain()
