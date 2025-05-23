@@ -2,6 +2,14 @@ import json
 import hashlib
 
 
+def bytes_from(obj) -> bytes:
+    return json.dumps(obj.__dict__).encode("utf-8")
+
+
+def restore_buffer(buffer: bytes):
+    return json.loads(buffer.decode("utf-8"))
+
+
 def hash_data(obj) -> str:
     data = json.dumps(
         {
