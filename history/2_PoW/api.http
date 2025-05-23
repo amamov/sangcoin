@@ -1,0 +1,26 @@
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+@hostname = 0.0.0.0
+@port = 2222
+@host = {{hostname}}:{{port}}
+@URL = http://{{host}}
+@contentType = application/json
+@blocks = blocks
+
+
+###
+{{URL}}
+
+### 
+{{URL}}/{{blocks}}
+
+###
+POST {{URL}}/{{blocks}}
+content-type: application/json
+
+{
+    "message": "mine me"
+}
+
+### 
+{{URL}}/{{blocks}}/0051ac6ead570eeed10b2552bcba5f067cc50f4ad8e3f9782d58d26b61285c79

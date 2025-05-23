@@ -2,6 +2,7 @@ import lmdb
 import os
 from typing import Optional
 
+# DB 설정
 DB_NAME = "blockchain.db"
 DB_PATH = os.path.join(os.getcwd(), DB_NAME)
 BLOCK_PREFIX = b"blocks:"
