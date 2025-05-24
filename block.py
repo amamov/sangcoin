@@ -23,6 +23,9 @@ class Block:
         self._persist()
 
     def _mine(self):
+        """
+        Block 채굴. 현재 Blockchain 난이도에 따라 채굴을 진행
+        """
         target = "0" * self.difficulty
 
         while True:
