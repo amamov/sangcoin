@@ -43,10 +43,10 @@ class Block:
         data = db.get_block(hash)
         if not data:
             return None
-        return cls.from_dict(restore_buffer(data))
+        return cls._from_dict(restore_buffer(data))
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Block":
+    def _from_dict(cls, data: dict) -> "Block":
         block = cls.__new__(cls)
         block.__dict__.update(data)
         return block
