@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException, APIRouter
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from blockchain import blockchain
 from block import Block
+from utils import dict_from
 from db import get_lmdb_contents
 
 app = FastAPI()
@@ -18,19 +19,13 @@ def root():
 
 @app.get("/status")
 def get_status():
-
-    return {
-        "height": blockchain.height,
-        "last_hash": blockchain.last_hash,
-        "current_difficulty": blockchain.current_difficulty,
-    }
+    return blockchain.to_dict()
 
 
 @app.get("/blocks")
 def get_blocks():
     blocks = blockchain.blocks()
-    print(blocks)
-    return [block.__dict__ for block in blocks]
+    return dict_from(blocks)
 
 
 @app.get("/blocks/{hash}")
