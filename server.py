@@ -29,6 +29,7 @@ def get_status():
 @app.get("/blocks")
 def get_blocks():
     blocks = blockchain.blocks()
+    print(blocks)
     return [block.__dict__ for block in blocks]
 
 
@@ -42,7 +43,7 @@ def get_block_by_hash(hash: str):
 
 @app.post("/blocks", status_code=201)
 def add_block(request: BlockRequest):
-    blockchain.add_block(request.message)
+    blockchain.add_block()
     return {"success": True}
 
 

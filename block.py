@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 import time
-from typing import Optional
+from typing import Optional, List
 from db import db
-from utils import bytes_from, restore_buffer, hash_data
+from utils import bytes_from, restore_buffer, hash_dataclass
+from transactions import Tx, make_coinbase_tx
 
 
 @dataclass
 class Block:
-    data: str
     prev_hash: str
     height: int
     difficulty: int
@@ -15,8 +15,10 @@ class Block:
     nonce: int = field(default=0, init=False)
     timestamp: int = field(default=0, init=False)
     hash: str = field(default="", init=False)
+    transactions: List[Tx] = field(default_factory=list, init=False)
 
     def __post_init__(self):
+        self.transactions.append(make_coinbase_tx("sang_address"))
         self._mine()
         self._persist()
 
@@ -25,7 +27,7 @@ class Block:
 
         while True:
             self.timestamp = int(time.time())
-            current_hash = hash_data(self)
+            current_hash = hash_dataclass(self)
             if current_hash.startswith(target):
                 self.hash = current_hash
                 break

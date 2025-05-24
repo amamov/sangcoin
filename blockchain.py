@@ -1,6 +1,7 @@
 from block import Block
 from db import db
 from utils import restore_buffer, bytes_from
+from transactions import make_coinbase_tx
 
 DEFAULT_DIFFICULTY = 2
 DIFFICULTY_INTERVAL = 5
@@ -16,14 +17,13 @@ class Blockchain:
 
         checkpoint = db.get_checkpoint()
         if checkpoint is None:
-            self.add_block("Genesis")
+            self.add_block()
         else:
             self._restore(checkpoint)
 
-    def add_block(self, data: str):
+    def add_block(self):
         self.current_difficulty = self._calculate_difficulty()
         block = Block(
-            data=data,
             prev_hash=self.last_hash,
             height=self.height + 1,
             difficulty=self.current_difficulty,
@@ -71,6 +71,13 @@ class Blockchain:
         if actual_time > expected_time + ALLOWED_RANGE_MINUTE:
             return self.current_difficulty - 1
         return self.current_difficulty
+
+    def to_dict(self):
+        return {
+            "last_hash": self.last_hash,
+            "height": self.height,
+            "current_difficulty": self.current_difficulty,
+        }
 
 
 # Singleton
