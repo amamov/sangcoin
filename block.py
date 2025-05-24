@@ -35,11 +35,16 @@ class Block:
                 self.nonce += 1
 
     def _persist(self):
-        data_bytes = bytes_from(self)
-        db.save_block(self.hash, data_bytes)
+        """
+        Block을 DB에 바이너리 값으로 저장.
+        """
+        db.save_block(self.hash, bytes_from(self))
 
     @classmethod
     def get(cls, hash: str) -> Optional["Block"]:
+        """
+        Block의 Hash 값으로 DB로부터 Block 객체(dataclass)를 가져옴.
+        """
         data = db.get_block(hash)
         if not data:
             return None

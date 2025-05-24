@@ -1,7 +1,6 @@
 from block import Block
 from db import db
 from utils import restore_buffer, bytes_from
-from transactions import make_coinbase_tx
 
 DEFAULT_DIFFICULTY = 2
 DIFFICULTY_INTERVAL = 5
