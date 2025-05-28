@@ -38,6 +38,6 @@ def dict_from(obj) -> dict | None | list:
         return obj
 
 
-def hash_data(obj) -> str:
+def hash_dataclass(obj) -> str:
     data = json.dumps(dict_from(obj), sort_keys=True).encode("utf-8")
     return hashlib.sha256(data).hexdigest()

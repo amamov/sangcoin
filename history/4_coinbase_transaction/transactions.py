@@ -1,28 +1,33 @@
 import time
-from typing import TypedDict, Optional
 from dataclasses import dataclass, field
 from typing import List
-from utils import hash_data
+from utils import hash_dataclass
 
 
 MINER_REWARD = 50
 
 
-class TxIn(TypedDict):
+@dataclass
+class TxIn:
     owner: str
     amount: int
 
 
-class TxOut(TypedDict):
+@dataclass
+class TxOut:
     owner: str
     amount: int
 
 
-class Tx(TypedDict):
-    id: str
+@dataclass
+class Tx:
+    id: str = field(default="", init=False)
     timestamp: int
     tx_ins: List[TxIn]
     tx_outs: List[TxOut]
+
+    def __post_init__(self):
+        self.id = hash_dataclass(self)
 
 
 def make_coinbase_tx(address: str) -> Tx:
@@ -33,13 +38,6 @@ def make_coinbase_tx(address: str) -> Tx:
     이 역할을 채굴자가 수행하고, 그 보상을 코인베이스 트랜젝션을 통해 지급 받는다.
     -> 신규 발행(Inflation) 기능 담당
     """
-    coinbase_tx_in: TxIn = {"amount": MINER_REWARD, "owner": "COINBASE"}
-    coinbase_tx_out: TxOut = {"amount": MINER_REWARD, "owner": address}
-    tx: Tx = {
-        "id": "",
-        "timestamp": int(time.time()),
-        "tx_ins": [coinbase_tx_in],
-        "tx_outs": [coinbase_tx_out],
-    }
-    tx["id"] = hash_data(tx)
-    return tx
+    tx_ins = [TxIn(owner="COINBASE", amount=MINER_REWARD)]
+    tx_outs = [TxOut(owner=address, amount=MINER_REWARD)]
+    return Tx(timestamp=int(time.time()), tx_ins=tx_ins, tx_outs=tx_outs)

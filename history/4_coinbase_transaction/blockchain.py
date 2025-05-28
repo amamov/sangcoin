@@ -1,7 +1,6 @@
 from block import Block
 from db import db
 from utils import restore_buffer, bytes_from
-from transactions import TxIn, TxOut
 
 DEFAULT_DIFFICULTY = 2
 DIFFICULTY_INTERVAL = 5
@@ -71,41 +70,6 @@ class Blockchain:
         if actual_time > expected_time + ALLOWED_RANGE_MINUTE:
             return self.current_difficulty - 1
         return self.current_difficulty
-
-    def _tx_outs(self) -> list[TxOut]:
-        """
-        블록체인에 있는 모든 거래 output들을 하나의 리스트로 리턴
-        """
-        tx_outs: list[TxOut] = []
-        blocks = self.blocks()
-        for block in blocks:
-            print(block)
-            for tx in block.transactions:
-                tx_outs += tx["tx_outs"]
-        return tx_outs
-
-    def tx_outs_by_address(self, address: str) -> list[TxOut]:
-        """
-        특정 address로 블록체인에 있는 해당 사용자(address)의
-        거래내역들(tx_outs)을 리턴
-        """
-        owned_tx_outs: list[TxOut] = []
-        tx_outs = self._tx_outs()
-        for tx_out in tx_outs:
-            if tx_out["owner"] == address:
-                owned_tx_outs.append(tx_out)
-        return owned_tx_outs
-
-    def balance_by_address(self, address: str) -> int:
-        """
-        balance는 특정 주소(address) 또는 계정(account) 이 현재 보유하고 있는 암호화폐의 양을 의미
-        특정 Address 소유자가 가지고 있는 총액
-        """
-        tx_outs = self.tx_outs_by_address(address)
-        amount: int = 0
-        for tx_out in tx_outs:
-            amount += tx_out["amount"]
-        return amount
 
     def to_dict(self):
         return {

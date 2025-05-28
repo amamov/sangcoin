@@ -14,11 +14,6 @@ class BlockRequest(BaseModel):
     message: str
 
 
-class BalanceResponse(BaseModel):
-    address: str
-    balance: int
-
-
 @app.get("/")
 def root():
     return "hello blockchain"
@@ -47,15 +42,6 @@ def get_block_by_hash(hash: str):
 def add_block(request: BlockRequest):
     blockchain.add_block()
     return {"success": True}
-
-
-@app.get("/balance/{address}")
-async def get_balance(address: str, total: Optional[str] = "false"):
-    if total and total.lower() == "true":
-        amount = blockchain.balance_by_address(address)
-        return BalanceResponse(address=address, balance=amount)
-    else:
-        return blockchain.tx_outs_by_address(address)
 
 
 @app.get("/debug/db")

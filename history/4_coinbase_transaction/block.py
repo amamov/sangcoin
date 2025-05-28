@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import time
 from typing import Optional, List
 from db import db
-from utils import bytes_from, restore_buffer, hash_data
+from utils import bytes_from, restore_buffer, hash_dataclass
 from transactions import Tx, make_coinbase_tx
 
 
@@ -30,7 +30,7 @@ class Block:
 
         while True:
             self.timestamp = int(time.time())
-            current_hash = hash_data(self)
+            current_hash = hash_dataclass(self)
             if current_hash.startswith(target):
                 self.hash = current_hash
                 break
@@ -54,7 +54,7 @@ class Block:
         return cls._from_dict(restore_buffer(data))
 
     @classmethod
-    def _from_dict(cls, data) -> "Block":
+    def _from_dict(cls, data: dict) -> "Block":
         block = cls.__new__(cls)
         block.__dict__.update(data)
         return block
