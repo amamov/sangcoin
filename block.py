@@ -3,7 +3,8 @@ import time
 from typing import Optional, List
 from db import db
 from utils import bytes_from, restore_buffer, hash_data
-from transactions import Tx, make_coinbase_tx
+from transactions import Tx
+from transactions.coinbase import make_coinbase_tx
 
 
 @dataclass

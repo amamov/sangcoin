@@ -1,17 +1,18 @@
-from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from blockchain import blockchain
 from block import Block
 from utils import dict_from
 from db import get_lmdb_contents
+from transactions.mempool import mempool
 
 
 app = FastAPI()
 
 
-class BlockRequest(BaseModel):
-    message: str
+class TxRequest(BaseModel):
+    receiver: str
+    amount: int
 
 
 class BalanceResponse(BaseModel):
@@ -44,18 +45,34 @@ def get_block_by_hash(hash: str):
 
 
 @app.post("/blocks", status_code=201)
-def add_block(request: BlockRequest):
+def add_block():
     blockchain.add_block()
     return {"success": True}
 
 
 @app.get("/balance/{address}")
-async def get_balance(address: str, total: Optional[str] = "false"):
-    if total and total.lower() == "true":
-        amount = blockchain.balance_by_address(address)
-        return BalanceResponse(address=address, balance=amount)
-    else:
-        return blockchain.tx_outs_by_address(address)
+def get_balance(address: str):
+    return blockchain.get_utxos(address)
+
+
+@app.get("/balance/total/{address}")
+def get_balance_total(address: str):
+    amount = blockchain.balance_by_address(address)
+    return BalanceResponse(address=address, balance=amount)
+
+
+@app.get("/mempool")
+def get_mempool():
+    return mempool.txs
+
+
+@app.post("/transactions")
+def transfer(tx_request: TxRequest):
+    try:
+        mempool.create_transfer(tx_request.receiver, tx_request.amount)
+        return {"success": True}
+    except ValueError:
+        return {"success": False}
 
 
 @app.get("/debug/db")

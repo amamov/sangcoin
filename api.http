@@ -31,6 +31,21 @@ content-type: application/json
 ###
 {{URL}}/balance/sang_address
 
+###
+{{URL}}/balance/total/sang_address
+
+###
+{{URL}}/mempool
+
+###
+POST {{URL}}/transactions
+content-type: application/json
+
+{
+    "receiver": "lina",
+    "amount": 70
+}
+
 
 ### 
 {{URL}}/debug/db

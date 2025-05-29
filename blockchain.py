@@ -1,7 +1,7 @@
 from block import Block
 from db import db
 from utils import restore_buffer, bytes_from
-from transactions import TxIn, TxOut
+from transactions import TxIO
 
 DEFAULT_DIFFICULTY = 2
 DIFFICULTY_INTERVAL = 5
@@ -72,39 +72,39 @@ class Blockchain:
             return self.current_difficulty - 1
         return self.current_difficulty
 
-    def _tx_outs(self) -> list[TxOut]:
+    def _tx_outputs(self) -> list[TxIO]:
         """
         블록체인에 있는 모든 거래 output들을 하나의 리스트로 리턴
         """
-        tx_outs: list[TxOut] = []
+        outputs: list[TxIO] = []
         blocks = self.blocks()
         for block in blocks:
-            print(block)
             for tx in block.transactions:
-                tx_outs += tx["tx_outs"]
-        return tx_outs
+                outputs += tx["outputs"]
+        return outputs
 
-    def tx_outs_by_address(self, address: str) -> list[TxOut]:
+    def get_utxos(self, address: str) -> list[TxIO]:
         """
         특정 address로 블록체인에 있는 해당 사용자(address)의
         거래내역들(tx_outs)을 리턴
         """
-        owned_tx_outs: list[TxOut] = []
-        tx_outs = self._tx_outs()
-        for tx_out in tx_outs:
-            if tx_out["owner"] == address:
-                owned_tx_outs.append(tx_out)
-        return owned_tx_outs
+        utxos: list[TxIO] = []
+        outputs = self._tx_outputs()
+        for output in outputs:
+            if output["owner"] == address:
+                utxos.append(output)
+        return utxos
 
     def balance_by_address(self, address: str) -> int:
         """
-        balance는 특정 주소(address) 또는 계정(account) 이 현재 보유하고 있는 암호화폐의 양을 의미
+        balance는 특정 주소(address) 또는 계정(account) 이 현재 보유하고 있는 암호화폐의 양을 의미 (잔액)
         특정 Address 소유자가 가지고 있는 총액
+        잔액은 "그 주소가 소유한 모든 UTXO의 합"으로 계산산
         """
-        tx_outs = self.tx_outs_by_address(address)
+        utxos = self.get_utxos(address)
         amount: int = 0
-        for tx_out in tx_outs:
-            amount += tx_out["amount"]
+        for utxo in utxos:
+            amount += utxo["amount"]
         return amount
 
     def to_dict(self):
