@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from blockchain import blockchain
 from block import Block
@@ -40,11 +40,13 @@ def get_blocks():
 def get_block_by_hash(hash: str):
     block = Block.get(hash)
     if not block:
-        raise HTTPException(status_code=404, detail="Block not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Block not found"
+        )
     return dict_from(block)
 
 
-@app.post("/blocks", status_code=201)
+@app.post("/blocks", status_code=status.HTTP_201_CREATED)
 def add_block():
     blockchain.add_block()
     return {"success": True}
@@ -66,13 +68,16 @@ def get_mempool():
     return mempool.txs
 
 
-@app.post("/transactions")
+@app.post("/transactions", status_code=status.HTTP_201_CREATED)
 def transfer(tx_request: TxRequest):
     try:
         mempool.create_transfer(tx_request.receiver, tx_request.amount)
         return {"success": True}
     except ValueError:
-        return {"success": False}
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid transaction request",
+        )
 
 
 @app.get("/debug/db")
