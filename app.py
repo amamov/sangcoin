@@ -57,7 +57,7 @@ def add_block():
 
 @app.get("/balance/{address}")
 def get_balance(address: str):
-    return blockchain.get_utxos(address)
+    return blockchain.get_utxos_by_address(address)
 
 
 @app.get("/balance/total/{address}")

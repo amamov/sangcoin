@@ -43,7 +43,7 @@ content-type: application/json
 
 {
     "receiver": "lina",
-    "amount": 700
+    "amount": 30
 }
 
 

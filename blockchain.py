@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Optional
 from block import Block
 from db import db
 from utils import restore_buffer, bytes_from
-from transactions import TxIO
+from transactions import TxOut, UTXO
 
 if TYPE_CHECKING:
     from transactions.mempool import Mempool
@@ -30,11 +30,15 @@ class Blockchain:
     def set_mempool(self, mempool):
         self._mempool = mempool
 
-    def add_block(self):
-        self.current_difficulty = self._calculate_difficulty()
+    def get_mnempool(self) -> "Mempool":
+        # TODO : from mempool import mempool  이 방식으로 해서 순환문제 해결 가능한지 체크하기 (싱글톤이기때문에 ㄱㅊ)
         if self._mempool is None:
             raise RuntimeError("mempool is not set.")
-        transactions = self._mempool.confirm_tx()
+        return self._mempool
+
+    def add_block(self):
+        self.current_difficulty = self._calculate_difficulty()
+        transactions = self.get_mnempool().confirm_tx()
         block = Block(
             prev_hash=self.last_hash,
             height=self.height + 1,
@@ -85,27 +89,30 @@ class Blockchain:
             return self.current_difficulty - 1
         return self.current_difficulty
 
-    def _tx_outputs(self) -> list[TxIO]:
-        """
-        블록체인에 있는 모든 거래 output들을 하나의 리스트로 리턴
-        """
-        outputs: list[TxIO] = []
-        blocks = self.blocks()
-        for block in blocks:
-            for tx in block.transactions:
-                outputs += tx["outputs"]
-        return outputs
-
-    def get_utxos(self, address: str) -> list[TxIO]:
+    def get_utxos_by_address(self, address: str) -> list[UTXO]:
         """
         특정 address로 블록체인에 있는 해당 사용자(address)의
         거래내역들(tx_outs)을 리턴
         """
-        utxos: list[TxIO] = []
-        outputs = self._tx_outputs()
-        for output in outputs:
-            if output["owner"] == address:
-                utxos.append(output)
+        utxos: list[UTXO] = []
+        spent_tx_ids = {}
+        for block in self.blocks():
+            for tx in block.transactions:
+                # 해당 주소가 입력에서 사용한 트랜잭션 ID를 기록
+                for tx_in in tx["inputs"]:
+                    if tx_in["owner"] == address:
+                        spent_tx_ids[tx_in["id"]] = True
+                # 해당 주소가 출력의 소유자이고, 아직 소비되지 않은 경우만 기록
+                for idx, tx_out in enumerate(tx["outputs"]):
+                    if tx_out["owner"] == address:
+                        if tx["id"] not in spent_tx_ids:
+                            utxo: UTXO = {
+                                "id": tx["id"],
+                                "index": idx,
+                                "amount": tx_out["amount"],
+                            }
+                            if not self.get_mnempool().is_utxo_used(utxo):
+                                utxos.append(utxo)
         return utxos
 
     def balance_by_address(self, address: str) -> int:
@@ -114,7 +121,7 @@ class Blockchain:
         특정 Address 소유자가 가지고 있는 총액
         잔액은 "그 주소가 소유한 모든 UTXO의 합"으로 계산산
         """
-        utxos = self.get_utxos(address)
+        utxos = self.get_utxos_by_address(address)
         amount: int = 0
         for utxo in utxos:
             amount += utxo["amount"]
