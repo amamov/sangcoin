@@ -1,4 +1,4 @@
-from . import Tx, TxIO, create_tx
+from . import Tx, TxIn, TxOut, create_tx
 
 MINER_REWARD = 50
 
@@ -11,6 +11,6 @@ def make_coinbase_tx(address: str) -> Tx:
     이 역할을 채굴자가 수행하고, 그 보상을 코인베이스 트랜젝션을 통해 지급 받는다.
     -> 신규 발행(Inflation) 기능 담당
     """
-    coinbase_tx_in: TxIO = {"amount": MINER_REWARD, "owner": "COINBASE"}
-    coinbase_tx_out: TxIO = {"amount": MINER_REWARD, "owner": address}
+    coinbase_tx_in: TxIn = {"id": "", "index": -1, "owner": "COINBASE"}
+    coinbase_tx_out: TxOut = {"amount": MINER_REWARD, "owner": address}
     return create_tx([coinbase_tx_in], [coinbase_tx_out])

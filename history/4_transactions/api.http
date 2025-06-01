@@ -29,10 +29,16 @@ content-type: application/json
 {{URL}}/{{blocks}}/0002c7a191a6a9fded9b62145b47fb445c22379a2998da1c6c90b729b301fcc8
 
 ###
-{{URL}}/balance/sang_address
+{{URL}}/balance/available/sang_address
 
 ###
-{{URL}}/balance/total/sang_address
+{{URL}}/balance/projected/sang_address
+
+###
+{{URL}}/balance/available/lina_address
+
+###
+{{URL}}/balance/projected/lina_address
 
 ###
 {{URL}}/mempool
@@ -42,8 +48,8 @@ POST {{URL}}/transactions
 content-type: application/json
 
 {
-    "receiver": "lina",
-    "amount": 700
+    "receiver": "lina_address",
+    "amount": 180
 }
 
 
