@@ -18,6 +18,17 @@ class Mempool:
         self.txs = txs
         self._blockchain: Optional[Blockchain] = None
 
+    # TODO
+    # @property
+    # def blockchain(self) -> "Blockchain":
+    #     if self._blockchain is None:
+    #         raise RuntimeError("blockchain is not set")
+    #     return self._blockchain
+
+    # @blockchain.setter
+    # def blockchain(self, value: "Blockchain"):
+    #     self._blockchain = value
+
     def set_blockchain(self, blockchain):
         self._blockchain = blockchain
 
@@ -33,6 +44,12 @@ class Mempool:
         sender: 자금을 보내는 주소
         receiver: 자금을 받는 주소
         amount: 보낼 금액
+
+        [[트랜잭션 생성]]
+        - 보내는 주소(sender)가 가진 UTXO를 모아 보내려는 금액 이상이 될때까지 inputs를 구성
+        - 잔돈이 있으면 본인 주소로 반환하는 change output 구성
+        - 수신자(receiver)에게 보낼 output 생성
+        - 새 트랜잭션 ID는 전체 트랜잭션에 해시를 적용해서 생성
         """
         if self.get_blockchain().balance_by_address(sender) < amount:
             raise ValueError("not enough 돈")
@@ -44,7 +61,7 @@ class Mempool:
         utxos = self.get_blockchain().get_utxos_by_address(sender)
 
         for utxo in utxos:
-            if total > amount:
+            if total >= amount:
                 break
             tx_inputs.append(
                 {"id": utxo["id"], "index": utxo["index"], "owner": sender}
@@ -60,6 +77,10 @@ class Mempool:
         return create_tx(tx_inputs, tx_outputs)
 
     def create_transfer(self, receiver: str, amount: int):
+        """
+        _build_transfer_tx로 만든 트랜잭션을 Mempool에 추가
+        아직 블록에 포함되지 않았으므로 확정되지 않은 상태
+        """
         tx = self._build_transfer_tx("sang_address", receiver, amount)
         self.txs.append(tx)
 
@@ -71,41 +92,15 @@ class Mempool:
         return txs
 
     def is_utxo_used(self, utxo: UTXO) -> bool:
+        """
+        해당 UTXO가 현재 mempool에서 사용 중인지 확인하는 함수
+        double spending 방지에서 아주 핵심적인 역할
+        """
         for tx in self.txs:
             for tx_in in tx["inputs"]:
-                if tx_in["id"] == utxo["id"] and tx_in["index"] == utxo["index"]:
+                if (tx_in["id"], tx_in["index"]) == (utxo["id"], utxo["index"]):
                     return True
         return False
 
 
 mempool = Mempool([])
-
-
-"""
-_build_transfer_tx 내부 동작 시뮬레이션
-
-[
-    {"owner": sender, "amount": 20},
-    {"owner": sender, "amount": 15},
-    {"owner": sender, "amount": 10},
-    {"owner": sender, "amount": 30},
-    {"owner": sender, "amount": 50},
-]
-
-amount = 67 (송금금액)
-
-==>
-
-inputs = [
-    {"owner": sender, "amount": 20},
-    {"owner": sender, "amount": 15},
-    {"owner": sender, "amount": 10},
-    {"owner": sender, "amount": 30},
-]  # 총합 = 75
-
-outputs = [
-    {"owner": sender, "amount": 8},      # 잔돈
-    {"owner": receiver, "amount": 67},   # 수신자에게 보낼 금액
-]
-
-"""
